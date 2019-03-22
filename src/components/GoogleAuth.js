@@ -14,19 +14,42 @@ class GoogleAuth extends Component{
             }).then(()=>{
                 this.auth = window.gapi.auth2.getAuthInstance();
                 this.setState({isSignedIn:this.auth.isSignedIn.get()});
+                this.auth.isSignedIn.listen(this.onAuthChange)
             }); 
         });   //use window since this is available on window scope
     }
 
+    onAuthChange = ()=>{
+        this.setState({isSignedIn:this.auth.isSignedIn.get()});
+    }
+
+    signOutHandler=()=>{
+        this.auth.signOut();
+    }
+
+    signInHandler=()=>{
+        this.auth.signIn();
+    }
+    
     renderAuthButton(){
         if(this.state.isSignedIn===null){
-            return <div>NO CLUE IF YOU ARE SIGNED IN</div>
+            return null;    
         }
         else if (this.state.isSignedIn===true){
-            return<div>You're signed in </div>
+            return(
+                <button className="ui red button google" onClick={this.signOutHandler}>
+                    <i className="google icon"/>
+                    SIGN OUT 
+                </button>
+            )
         }
         else{
-            return <div>NOT SIGNED IN</div>
+            return(
+                <button className="ui green button google" onClick={this.signInHandler}>
+                    <i className="google icon"/>
+                    SIGN IN WITH GOOGLE
+                </button>
+            )
         }
     }
     render(){
